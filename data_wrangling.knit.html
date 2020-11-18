@@ -9,11 +9,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Nijat Gasimov" />
 
-<meta name="date" content="2020-11-05" />
 
-<title>Journal (reproducible report)</title>
+<title>Data Wrangling</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -21,9 +19,6 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
-<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
-<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -265,69 +260,6 @@ $(document).ready(function () {
 
 
 
-<style type="text/css">
-
-#TOC {
-  margin: 25px 0px 20px 0px;
-}
-@media (max-width: 768px) {
-#TOC {
-  position: relative;
-  width: 100%;
-}
-}
-
-@media print {
-.toc-content {
-  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
-  float: right;
-}
-}
-
-.toc-content {
-  padding-left: 30px;
-  padding-right: 40px;
-}
-
-div.main-container {
-  max-width: 1200px;
-}
-
-div.tocify {
-  width: 20%;
-  max-width: 260px;
-  max-height: 85%;
-}
-
-@media (min-width: 768px) and (max-width: 991px) {
-  div.tocify {
-    width: 25%;
-  }
-}
-
-@media (max-width: 767px) {
-  div.tocify {
-    width: 100%;
-    max-width: none;
-  }
-}
-
-.tocify ul, .tocify li {
-  line-height: 20px;
-}
-
-.tocify-subheader .tocify-item {
-  font-size: 0.90em;
-}
-
-.tocify .list-group-item {
-  border-radius: 0px;
-}
-
-
-</style>
-
-
 
 </head>
 
@@ -335,16 +267,6 @@ div.tocify {
 
 
 <div class="container-fluid main-container">
-
-
-<!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
-<div class="col-xs-12 col-sm-4 col-md-3">
-<div id="TOC" class="tocify">
-</div>
-</div>
-
-<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -403,47 +325,38 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Journal (reproducible report)</h1>
-<h4 class="author">Nijat Gasimov</h4>
-<h4 class="date">2020-11-05</h4>
+<h1 class="title toc-ignore">Data Wrangling</h1>
+<h4 class="date">Nov 5, 2020</h4>
 
 </div>
 
 
-<p><strong>IMPORTANT:</strong> You can delete everything in here and start fresh. You might want to start by not deleting anything above this line until you know what that stuff is doing.</p>
-<p>This is an <code>.Rmd</code> file. It is plain text with special features. Any time you write just like this, it will be compiled to normal text in the website. If you put a # in front of your text, it will create a top level-header.</p>
-<div id="my-first-post" class="section level1">
-<h1><span class="header-section-number">1</span> My first post</h1>
-<p>Last compiled: 2020-11-18</p>
-<p>Notice that whatever you define as a top level header, automatically gets put into the table of contents bar on the left.</p>
-<div id="second-level-header" class="section level2">
-<h2><span class="header-section-number">1.1</span> Second level header</h2>
-<p>You can add more headers by adding more hashtags. These won’t be put into the table of contents</p>
-<div id="third-level-header" class="section level3">
-<h3><span class="header-section-number">1.1.1</span> third level header</h3>
-<p>Here’s an even lower level header</p>
-</div>
-</div>
-</div>
-<div id="my-second-post-note-the-order" class="section level1">
-<h1><span class="header-section-number">2</span> My second post (note the order)</h1>
-<p>Last compiled: 2020-11-18</p>
-<p>I’m writing this tutorial going from the top down. And, this is how it will be printed. So, notice the second post is second in the list. If you want your most recent post to be at the top, then make a new post starting at the top. If you want the oldest first, do, then keep adding to the bottom</p>
-</div>
-<div id="adding-r-stuff" class="section level1">
-<h1><span class="header-section-number">3</span> Adding R stuff</h1>
-<p>So far this is just a blog where you can write in plain text and serve your writing to a webpage. One of the main purposes of this lab journal is to record your progress learning R. The reason I am asking you to use this process is because you can both make a website, and a lab journal, and learn R all in R-studio. This makes everything really convenient and in the same place.</p>
-<p>So, let’s say you are learning how to make a histogram in R. For example, maybe you want to sample 100 numbers from a normal distribution with mean = 0, and standard deviation = 1, and then you want to plot a histogram. You can do this right here by using an r code block, like this:</p>
-<pre class="r"><code>samples &lt;- rnorm(100, mean=0, sd=1)
-hist(samples)</code></pre>
-<p><img src="journal_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
-<p>When you knit this R Markdown document, you will see that the histogram is printed to the page, along with the R code. This document can be set up to hide the R code in the webpage, just delete the comment (hashtag) from the cold folding option in the yaml header up top. For purposes of letting yourself see the code, and me see the code, best to keep it the way that it is. You’ll learn that all of these things and more can be customized in each R code block.</p>
+<div id="example" class="section level1">
+<h1>Example</h1>
+<p>To explore the basic data manipulation verbs of the package <code>dplyr</code>, we’ll use the datasets <code>mtcars</code> (comes with RStudio). The data was extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models). The data is documented in <code>?mtcars</code>.</p>
+<p>The following code chunks will only print something, if you’ve installed the package <code>dplyr</code>. That is why everything is wrapped in a <code>if</code> condition.</p>
+<p>To do so, run:</p>
+<pre class="r"><code>install.packages(&quot;dplyr&quot;)</code></pre>
+<pre class="r"><code>if (&quot;dplyr&quot; %in% rownames(installed.packages())) {
+
+  # Load libraries
+  library(dplyr)
+  
+  # Print the dataframe
+  mtcars
+
+}</code></pre>
+<p><code>filter()</code> allows you to subset observations based on their values. The first argument is the name of the data frame. The second and subsequent arguments are the expressions that filter the data frame. For example, we can select all cars with 4 cylinders and more than 90 horsepower:</p>
+<pre class="r"><code>if (&quot;dplyr&quot; %in% rownames(installed.packages())) {
+
+  filter(mtcars, cyl == 4, hp &gt; 90)
+  
+}  </code></pre>
+<p>…</p>
 </div>
 
 
 
-</div>
-</div>
 
 </div>
 
@@ -476,32 +389,6 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

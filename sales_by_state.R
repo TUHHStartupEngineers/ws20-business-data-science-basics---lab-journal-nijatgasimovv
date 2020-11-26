@@ -1,9 +1,10 @@
-# BUSINESS & MANAGEMENT / DATA SCIENCE CHALLENGE 1
+# BUSINESS & MANAGEMENT / DATA SCIENCE CHALLENGE 1.1
 
 # 1. Load libraries
 
 library(tidyverse)
 library(readxl)
+library(lubridate)
 
 # 2. Importing Excel data
 
@@ -68,7 +69,37 @@ sales_by_state_c1_tbl %>%
 
 
 
+# BUSINESS & MANAGEMENT / DATA SCIENCE CHALLENGE 1.2
 
+# We will continue building on the previous code, so some steps are not needed to be repeated again.
+
+# 1. Manipulate data for new graph
+
+sales_by_state_and_year_c1_tbl <- bike_orderlines_wrangled_c1_tbl %>% #create new data for visualization
+  select(order.date, total.price, state) %>% #take out needed column from for the new data
+  mutate(year = year(order.date)) %>% #add a year column using lubridate
+  group_by(year, state) %>%
+  summarise(sales = sum(total.price)) %>%
+  ungroup() %>%
+  
+  mutate(sales_text = scales::dollar(sales, big.mark = ".", 
+                                     decimal.mark = ",", 
+                                     prefix = "", 
+                                     suffix = " €")) #formatting the money
+
+
+# 2. Visualizing the data
+
+sales_by_state_and_year_c1_tbl %>%
+  ggplot(aes(x = year, y = sales, fill = state))+ #create the plot
+  geom_col() +  #define plot type
+  facet_wrap(~ state)+  #to form a different plot for each state
+  scale_y_continuous(labels = scales::dollar_format(big.mark = ".", 
+                                                  decimal.mark = ",", 
+                                                  prefix = "", 
+                                                  suffix = " €"))+ #formatting
+  theme(axis.text.x = element_text(angle = 70, hjust = 1)) #rotate the x-axis label
+  
 
 
 

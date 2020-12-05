@@ -18,9 +18,9 @@ knitr::opts_chunk$set(message=FALSE,warning=FALSE, cache=TRUE)
 
 
 
-# Challenge 1
+# Chapter 2
 
-## Challenge 1.1
+## Challenge 1
 
 Code for the first Challenge, sales by state are given below.
 
@@ -35,9 +35,9 @@ library(lubridate)
 ### Importing Excel data
 
 ```{r}
-bikes_c1_tbl <- read_excel(path = "00_data/01_bike_sales/01_raw_data/bikes.xlsx")
-orderlines_c1_tbl <- read_excel(path = "00_data/01_bike_sales/01_raw_data/orderlines.xlsx")
-bikeshops_c1_tbl  <- read_excel(path = "00_data/01_bike_sales/01_raw_data/bikeshops.xlsx")
+bikes_c1_tbl <- read_excel(path = "data-science/00_data/01_bike_sales/01_raw_data/bikes.xlsx")
+orderlines_c1_tbl <- read_excel(path = "data-science/00_data/01_bike_sales/01_raw_data/orderlines.xlsx")
+bikeshops_c1_tbl  <- read_excel(path = "data-science/00_data/01_bike_sales/01_raw_data/bikeshops.xlsx")
 ```
 
 ### Joining data
@@ -104,7 +104,7 @@ sales_by_state_c1_tbl %>%
 
 
 
-## Challenge 1.2
+## Challenge 2
 
 We will continue building on the previous code, so some steps are not needed to be repeated again.
 
@@ -139,9 +139,9 @@ sales_by_state_and_year_c1_tbl %>%
   #theme(axis.text.x = element_text(angle = 70, hjust = 1)) #rotate the x-axis label
 ```
 
-# Challenge 2
+# Chapter 3
 
-## Challenge 2.1
+## Challenge 3
 
 
 For this task, I will access to Deezer (music streaming platform) API and extract my Retro music playlist which I created in 2014.
@@ -203,6 +203,83 @@ Playlist <- bind_cols("Song"=Titels, "Album"= Albums, "Artist"=Artists, "Link"=L
 
 ```{r}
 Playlist
+```
+
+
+
+## Challenge 4
+
+
+
+### Load the libraries
+
+```{r}
+library(tidyverse) # Main Package - Loads dplyr, purrr, etc.
+library(rvest)     # HTML Hacking & Web Scraping
+library(xopen)     # Quickly opening URLs
+library(jsonlite)  # converts JSON files to R objects
+library(glue)      # concatenate strings
+library(stringi)   # character string/text processing
+library(RSQLite)   # working with databases
+```
+
+### Open website
+
+Arbitrarily chosen E-bike family, Mountainbike category
+
+```{r}
+url_homepage <- "https://www.radon-bikes.de/e-bike/mountainbike/bikegrid/"
+#xopen(url_homepage)
+html_homepage <- read_html(url_homepage)
+```
+
+
+### Scrape the website 
+
+Scraping product ID's and prices
+```{r}
+#Extract the product ID names
+product_id_tbl <- html_homepage %>%
+  html_nodes(css = ".m-bikegrid__info .a-heading--small") %>%
+  html_text() %>%
+  trimws("both") %>% #deleting empty space
+  enframe(name = "position", value = "product_id") #vector to tibble
+
+#Extract the product prices
+product_prices_tbl <- html_homepage %>%
+  html_nodes(css = ".currency_eur> .m-bikegrid__price--active") %>%
+  html_text("span") %>% #extract attribute span
+  enframe(name = "position", value = "product_prices") #vector to tibble
+
+#Bind two columns
+mountainbike_list_tbl <- product_id_tbl %>%
+  bind_cols(product_prices_tbl %>% select("product_prices"))
+```
+
+### Create database
+
+```{r}
+# Forming database
+con <- RSQLite::dbConnect(drv    = SQLite(), 
+                           dbname = "data-science/00_data/Mountain_bikes.sqlite")
+
+# Adding tables to database
+dbWriteTable(con, "product_id", product_id_tbl, overwrite=TRUE)
+dbWriteTable(con, "product_prices", product_prices_tbl, overwrite=TRUE)
+```
+
+### Call database
+```{r}
+# Return the name of tables
+dbListTables(con)
+
+# List any table needed
+tbl(con, "product_id")
+tbl(con, "product_prices")
+
+# Disconnect after use
+dbDisconnect(con)
+con
 ```
 
 

@@ -410,10 +410,10 @@ div.tocify {
 </div>
 
 
-<div id="challenge-1" class="section level1">
-<h1><span class="header-section-number">1</span> Challenge 1</h1>
-<div id="challenge-1.1" class="section level2">
-<h2><span class="header-section-number">1.1</span> Challenge 1.1</h2>
+<div id="chapter-2" class="section level1">
+<h1><span class="header-section-number">1</span> Chapter 2</h1>
+<div id="challenge-1" class="section level2">
+<h2><span class="header-section-number">1.1</span> Challenge 1</h2>
 <p>Code for the first Challenge, sales by state are given below.</p>
 <div id="loading-libraries" class="section level3">
 <h3><span class="header-section-number">1.1.1</span> Loading libraries</h3>
@@ -493,8 +493,8 @@ bikeshops_c1_tbl  &lt;- read_excel(path = &quot;00_data/01_bike_sales/01_raw_dat
 <p><img src="journal_files/figure-html/plot-1.png" width="960" /></p>
 </div>
 </div>
-<div id="challenge-1.2" class="section level2">
-<h2><span class="header-section-number">1.2</span> Challenge 1.2</h2>
+<div id="challenge-2" class="section level2">
+<h2><span class="header-section-number">1.2</span> Challenge 2</h2>
 <p>We will continue building on the previous code, so some steps are not needed to be repeated again.</p>
 <div id="manipulate-data-for-new-graph" class="section level3">
 <h3><span class="header-section-number">1.2.1</span> Manipulate data for new graph</h3>
@@ -525,10 +525,10 @@ bikeshops_c1_tbl  &lt;- read_excel(path = &quot;00_data/01_bike_sales/01_raw_dat
 </div>
 </div>
 </div>
-<div id="challenge-2" class="section level1">
-<h1><span class="header-section-number">2</span> Challenge 2</h1>
-<div id="challenge-2.2" class="section level2">
-<h2><span class="header-section-number">2.1</span> Challenge 2.2</h2>
+<div id="chapter-3" class="section level1">
+<h1><span class="header-section-number">2</span> Chapter 3</h1>
+<div id="challenge-3" class="section level2">
+<h2><span class="header-section-number">2.1</span> Challenge 3</h2>
 <p>For this task, I will access to Deezer (music streaming platform) API and extract my Retro music playlist which I created in 2014.</p>
 <div id="load-the-libraries" class="section level3">
 <h3><span class="header-section-number">2.1.1</span> Load the libraries</h3>
@@ -592,6 +592,111 @@ Playlist &lt;- bind_cols(&quot;Song&quot;=Titels, &quot;Album&quot;= Albums, &qu
 ##  9 Low            Get On With It: The Best Of  Cracker        https://www.deeze~
 ## 10 Right Here Wa~ Repeat Offender              Richard Marx   https://www.deeze~
 ## # ... with 165 more rows</code></pre>
+</div>
+</div>
+<div id="challenge-4" class="section level2">
+<h2><span class="header-section-number">2.2</span> Challenge 4</h2>
+<div id="load-the-libraries-1" class="section level3">
+<h3><span class="header-section-number">2.2.1</span> Load the libraries</h3>
+<pre class="r"><code>library(tidyverse) # Main Package - Loads dplyr, purrr, etc.
+library(rvest)     # HTML Hacking &amp; Web Scraping
+library(xopen)     # Quickly opening URLs
+library(jsonlite)  # converts JSON files to R objects
+library(glue)      # concatenate strings
+library(stringi)   # character string/text processing
+library(RSQLite)   # working with databases</code></pre>
+</div>
+<div id="open-website" class="section level3">
+<h3><span class="header-section-number">2.2.2</span> Open website</h3>
+<p>Arbitrarily chosen E-bike family, Mountainbike category</p>
+<pre class="r"><code>url_homepage &lt;- &quot;https://www.radon-bikes.de/e-bike/mountainbike/bikegrid/&quot;
+#xopen(url_homepage)
+html_homepage &lt;- read_html(url_homepage)</code></pre>
+</div>
+<div id="scrape-the-website" class="section level3">
+<h3><span class="header-section-number">2.2.3</span> Scrape the website</h3>
+<p>Scraping product ID’s and prices</p>
+<pre class="r"><code>#Extract the product ID names
+product_id_tbl &lt;- html_homepage %&gt;%
+  #Get the nodes for the product names ...
+  html_nodes(css = &quot;.m-bikegrid__info .a-heading--small&quot;) %&gt;%
+  # ...and extract the text of the html attribute
+  html_text() %&gt;%
+  # Delete the unnecessary formatting
+  #str_replace_all(&quot;[\t\n\r\v\f]&quot; , &quot;&quot;) %&gt;%
+  # Delete whitespace
+  trimws(&quot;both&quot;) %&gt;%
+  # Convert vector to tibble
+  enframe(name = &quot;position&quot;, value = &quot;product_id&quot;)
+
+#Extract the product prices
+product_prices_tbl &lt;- html_homepage %&gt;%
+  #Get the nodes for the product prices
+  html_nodes(css = &quot;.currency_eur&gt; .m-bikegrid__price--active&quot;) %&gt;%
+  # ...and extract the information of the span attribute
+  html_text(&quot;span&quot;) %&gt;%
+  # Convert vector to tibble
+  enframe(name = &quot;position&quot;, value = &quot;product_prices&quot;)
+
+#Bind two columns
+mountainbike_list_tbl &lt;- product_id_tbl %&gt;%
+  bind_cols(product_prices_tbl %&gt;% select(&quot;product_prices&quot;))</code></pre>
+</div>
+<div id="create-database" class="section level3">
+<h3><span class="header-section-number">2.2.4</span> Create database</h3>
+<pre class="r"><code>con &lt;- RSQLite::dbConnect(drv    = SQLite(), 
+                           dbname = &quot;data-science/00_data/Mountain_bikes.sqlite&quot;)
+
+dbWriteTable(con, &quot;product_id&quot;, product_id_tbl, overwrite=TRUE)
+dbWriteTable(con, &quot;product_prices&quot;, product_prices_tbl, overwrite=TRUE)</code></pre>
+</div>
+<div id="call-database" class="section level3">
+<h3><span class="header-section-number">2.2.5</span> Call database</h3>
+<pre class="r"><code># Return the name of tables
+dbListTables(con)</code></pre>
+<pre><code>## [1] &quot;product_id&quot;     &quot;product_prices&quot;</code></pre>
+<pre class="r"><code># List any table needed
+tbl(con, &quot;product_id&quot;)</code></pre>
+<pre><code>## # Source:   table&lt;product_id&gt; [?? x 2]
+## # Database: sqlite 3.33.0 [C:\Users\ACER\Google Drive\Studies\Business &amp;
+## #   Management\Data
+## #   Science\Repository\ws20-business-data-science-basics---lab-journal-nijatgasimovv\data-science\00_data\Mountain_bikes.sqlite]
+##    position product_id                        
+##       &lt;int&gt; &lt;chr&gt;                             
+##  1        1 RENDER 8.0                        
+##  2        2 RENDER 9.0                        
+##  3        3 RENDER 10.0                       
+##  4        4 RENDER 10.0 HD SUPREME            
+##  5        5 JEALOUS AL HYBRID 8.0             
+##  6        6 JEALOUS AL HYBRID 8.0             
+##  7        7 JEALOUS AL HYBRID 9.0             
+##  8        8 ZR TEAM HYBRID 6.0 CX 500         
+##  9        9 ZR TEAM HYBRID 8.0 CX 500         
+## 10       10 ZR TEAM HYBRID PERFORMANCE 7.0 500
+## # ... with more rows</code></pre>
+<pre class="r"><code>tbl(con, &quot;product_prices&quot;)</code></pre>
+<pre><code>## # Source:   table&lt;product_prices&gt; [?? x 2]
+## # Database: sqlite 3.33.0 [C:\Users\ACER\Google Drive\Studies\Business &amp;
+## #   Management\Data
+## #   Science\Repository\ws20-business-data-science-basics---lab-journal-nijatgasimovv\data-science\00_data\Mountain_bikes.sqlite]
+##    position product_prices
+##       &lt;int&gt; &lt;chr&gt;         
+##  1        1 4199 €        
+##  2        2 4999 €        
+##  3        3 5799 €        
+##  4        4 6799 €        
+##  5        5 2699 €        
+##  6        6 2699 €        
+##  7        7 2999 €        
+##  8        8 1999 €        
+##  9        9 2299 €        
+## 10       10 1699 €        
+## # ... with more rows</code></pre>
+<pre class="r"><code># Disconnect after use
+dbDisconnect(con)
+con</code></pre>
+<pre><code>## &lt;SQLiteConnection&gt;
+##   DISCONNECTED</code></pre>
 <p><strong>IMPORTANT:</strong> You can delete everything in here and start fresh. You might want to start by not deleting anything above this line until you know what that stuff is doing.</p>
 <p>This is an <code>.Rmd</code> file. It is plain text with special features. Any time you write just like this, it will be compiled to normal text in the website. If you put a # in front of your text, it will create a top level-header.</p>
 </div>
@@ -599,7 +704,7 @@ Playlist &lt;- bind_cols(&quot;Song&quot;=Titels, &quot;Album&quot;= Albums, &qu
 </div>
 <div id="my-first-post" class="section level1">
 <h1><span class="header-section-number">3</span> My first post</h1>
-<p>Last compiled: 2020-12-04</p>
+<p>Last compiled: 2020-12-05</p>
 <p>Notice that whatever you define as a top level header, automatically gets put into the table of contents bar on the left.</p>
 <div id="second-level-header" class="section level2">
 <h2><span class="header-section-number">3.1</span> Second level header</h2>
@@ -612,7 +717,7 @@ Playlist &lt;- bind_cols(&quot;Song&quot;=Titels, &quot;Album&quot;= Albums, &qu
 </div>
 <div id="my-second-post-note-the-order" class="section level1">
 <h1><span class="header-section-number">4</span> My second post (note the order)</h1>
-<p>Last compiled: 2020-12-04</p>
+<p>Last compiled: 2020-12-05</p>
 <p>I’m writing this tutorial going from the top down. And, this is how it will be printed. So, notice the second post is second in the list. If you want your most recent post to be at the top, then make a new post starting at the top. If you want the oldest first, do, then keep adding to the bottom</p>
 </div>
 <div id="adding-r-stuff" class="section level1">
@@ -621,7 +726,7 @@ Playlist &lt;- bind_cols(&quot;Song&quot;=Titels, &quot;Album&quot;= Albums, &qu
 <p>So, let’s say you are learning how to make a histogram in R. For example, maybe you want to sample 100 numbers from a normal distribution with mean = 0, and standard deviation = 1, and then you want to plot a histogram. You can do this right here by using an r code block, like this:</p>
 <pre class="r"><code>samples &lt;- rnorm(100, mean=0, sd=1)
 hist(samples)</code></pre>
-<p><img src="journal_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><img src="journal_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 <p>When you knit this R Markdown document, you will see that the histogram is printed to the page, along with the R code. This document can be set up to hide the R code in the webpage, just delete the comment (hashtag) from the cold folding option in the yaml header up top. For purposes of letting yourself see the code, and me see the code, best to keep it the way that it is. You’ll learn that all of these things and more can be customized in each R code block.</p>
 </div>
 

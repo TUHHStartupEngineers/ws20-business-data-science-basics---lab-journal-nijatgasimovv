@@ -18,7 +18,7 @@ knitr::opts_chunk$set(message=FALSE,warning=FALSE, cache=TRUE)
 
 
 
-# Chapter 2
+# Intro to tidyverse 
 
 ## Challenge 1
 
@@ -139,7 +139,7 @@ sales_by_state_and_year_c1_tbl %>%
   #theme(axis.text.x = element_text(angle = 70, hjust = 1)) #rotate the x-axis label
 ```
 
-# Chapter 3
+# Data Acquisition
 
 ## Challenge 3
 
@@ -276,41 +276,135 @@ con
 
 
 
+# Data Wrangling
 
-
-**IMPORTANT:** You can delete everything in here and start fresh. You might want to start by not deleting anything above this line until you know what that stuff is doing.
-
-This is an `.Rmd` file. It is plain text with special features. Any time you write just like this, it will be compiled to normal text in the website. If you put a \# in front of your text, it will create a top level-header.
-
-# My first post
-
-Last compiled: `r Sys.Date()`
-
-Notice that whatever you define as a top level header, automatically gets put into the table of contents bar on the left. 
-
-## Second level header
-
-You can add more headers by adding more hashtags. These won't be put into the table of contents
-
-### third level header
-
-Here's an even lower level header
-
-# My second post (note the order)
-
-Last compiled: `r Sys.Date()`
-
-I'm writing this tutorial going from the top down. And, this is how it will be printed. So, notice the second post is second in the list. If you want your most recent post to be at the top, then make a new post starting at the top. If you want the oldest first, do, then keep adding to the bottom
-
-# Adding R stuff
-
-So far this is just a blog where you can write in plain text and serve your writing to a webpage. One of the main purposes of this lab journal is to record your progress learning R. The reason I am asking you to use this process is because you can both make a website, and a lab journal, and learn R all in R-studio. This makes everything really convenient and in the same place. 
-
-So, let's say you are learning how to make a histogram in R. For example, maybe you want to sample 100 numbers from a normal distribution with mean = 0, and standard deviation = 1, and then you want to plot a histogram. You can do this right here by using an r code block, like this:
+## Challenge 4
 
 ```{r}
-samples <- rnorm(100, mean=0, sd=1)
-hist(samples)
+# 1. Load libraries
+
+library(tidyverse)
+library(vroom)
+library(data.table)
+library(lubridate)
+
+# 2. Data import
+
+# 2.1 Load Assignee data
+
+# Includes datasets for all 3 tasks
+col_types_ass <- list(
+  id = col_character(),
+  type = col_character(),
+  name_first = col_character(),
+  name_last = col_character(),
+  organization = col_character()
+)
+
+
+assignee_tbl <- vroom(
+  file       = "assignee.tsv/assignee.tsv", 
+  delim      = "\t", 
+  col_types  = col_types_ass,
+  na         = c("", "NA", "NULL")
+)
+
+
+
+# 2.2 Load Patent Assignee data
+
+col_types_pat_ass <- list(
+  patent_id = col_character(),
+  assignee_id = col_character(),
+  location_id = col_character()
+)
+
+
+patent_ass_tbl <- vroom(
+  file       = "patent_assignee.tsv/patent_assignee.tsv", 
+  delim      = "\t", 
+  col_types  = col_types_pat_ass,
+  na         = c("", "NA", "NULL")
+)
+    
+
+# 2.3 Load Patent data
+
+#col_types_patent <- list(
+#  id = col_character(),
+#  type = col_character(),
+#  number = col_character(),
+#  country = col_character(),
+#  date = col_date("%Y-%m-%d"),
+#  abstract = col_character(),
+#  title = col_character(),
+#  kind = col_character(),
+#  num_claims = col_double(),
+#  filename = col_character(),
+#  withdrawn = col_double()
+#)
+
+#patent_tbl <- vroom(
+#  file       = "patent.tsv", 
+#  delim      = "\t", 
+#  col_types  = col_types_patent,
+#  na         = c("", "NA", "NULL")
+#)
+
+
+
+# 3. Convert to data.table (optionally added to use if needed)
+#class(assignee_tbl)
+#setDT(assignee_tbl)
+#class(assignee_tbl)
+#assignee_tbl %>% glimpse()
+
+#class(patent_ass_tbl)
+#setDT(patent_ass_tbl)
+#class(patent_ass_tbl)
+#patent_ass_tbl %>% glimpse()
+
+
+# 4. Question 1
+
+# 4.1 Merging data
+
+# Combining two datasets
+combined_data <- patent_ass_tbl %>%
+  left_join(assignee_tbl, by = c("assignee_id" = "id"))
+
+# 4.2 Wrangle data
+
+top_companies_tbl <- combined_data %>%
+  filter(type == 2) %>% # Filtering US organizations
+  group_by(organization) %>%
+  count() %>%
+  ungroup() %>%
+  arrange(desc(n))
+
+print(top_companies_tbl, n=10)
+
+
+# 5. Question 2
+
+# 5.1 Merging data
+
+#combined_data_2 <- combined_data %>%
+#  left_join(patent_tbl, by = c("patent_id" = "id"))
+
+# 5.2 Wrangle data
+#top_companies_2019_tbl <- combined_data_2 %>%
+#  filter(type == 2) %>% # filtering US companies
+#  filter(date == year(2019)) %>% # filtering the year 2019 with lubridate
+#           group_by(organization) %>%
+#           count() %>%
+#           ungroup() %>%
+#           arrange(desc(n))
+#
+#print(top_companies_2019_tbl, n=10)
 ```
 
-When you knit this R Markdown document, you will see that the histogram is printed to the page, along with the R code. This document can be set up to hide the R code in the webpage, just delete the comment (hashtag) from the cold folding option in the yaml header up top. For purposes of letting yourself see the code, and me see the code, best to keep it the way that it is. You'll learn that all of these things and more can be customized in each R code block.
+
+
+  
+

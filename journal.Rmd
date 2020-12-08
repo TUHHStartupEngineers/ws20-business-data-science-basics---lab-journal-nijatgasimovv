@@ -279,6 +279,7 @@ con
 # Data Wrangling
 
 ## Challenge 4
+### Question 1
 
 ```{r}
 # 1. Load libraries
@@ -353,6 +354,23 @@ patent_ass_tbl <- vroom(
 
 
 
+# 2.4 Load uspc data
+
+#col_types_uspc <- list(
+#  uuid = col_character(),
+#  patent_id = col_character(),
+#  mainclass_id = col_character(),
+#  subclass_id = col_character(),
+#  sequence = col_character()
+#)
+
+#uspc_tbl <- vroom(
+#  file = "uspc.tsv",
+#  delim      = "\t", 
+#  col_types  = col_types_uspc,
+#  na         = c("", "NA", "NULL")
+#  )
+
 # 3. Convert to data.table (optionally added to use if needed)
 #class(assignee_tbl)
 #setDT(assignee_tbl)
@@ -385,7 +403,10 @@ top_companies_tbl <- combined_data %>%
 print(top_companies_tbl, n=10)
 
 
-# 5. Question 2
+```
+
+### Question 2
+```{r}
 
 # 5.1 Merging data
 
@@ -405,6 +426,32 @@ print(top_companies_tbl, n=10)
 ```
 
 
+### Question 3
+```{r}
+# 6.1 Merging data
+
+#combined_data_3 <- combined_data %>%
+#  left_join(uspc_tbl, by = c("patent_id" = "id"))
+
+# 6.2 Wrangle data
+
+#global_companies <- combined_data_3 %>%
+#  filter(type == 2  | type == 3) %>%
+#  unique(by="id")
+
+
+#global_top10 <- global_companies %>%
+#  group_by(organization) %>%
+#  count(organization, sort=TRUE, name = "number_patent") %>%
+#  ungroup() %>%
+#  arrange(desc(n))
+#  head(10)
+
+#top5_uspto <- semi_join(global_companies, global_top10, by = organization) %>%
+#  count(mainclass_id, sort=TRUE, name='n') %>%
+#  head(5)
+  
+#top5_uspto
 
   
 

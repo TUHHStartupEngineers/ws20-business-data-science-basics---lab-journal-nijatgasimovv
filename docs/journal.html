@@ -696,6 +696,8 @@ con</code></pre>
 <h1><span class="header-section-number">3</span> Data Wrangling</h1>
 <div id="challenge-4-1" class="section level2">
 <h2><span class="header-section-number">3.1</span> Challenge 4</h2>
+<div id="question-1" class="section level3">
+<h3><span class="header-section-number">3.1.1</span> Question 1</h3>
 <pre class="r"><code># 1. Load libraries
 
 library(tidyverse)
@@ -768,6 +770,23 @@ patent_ass_tbl &lt;- vroom(
 
 
 
+# 2.4 Load uspc data
+
+#col_types_uspc &lt;- list(
+#  uuid = col_character(),
+#  patent_id = col_character(),
+#  mainclass_id = col_character(),
+#  subclass_id = col_character(),
+#  sequence = col_character()
+#)
+
+#uspc_tbl &lt;- vroom(
+#  file = &quot;uspc.tsv&quot;,
+#  delim      = &quot;\t&quot;, 
+#  col_types  = col_types_uspc,
+#  na         = c(&quot;&quot;, &quot;NA&quot;, &quot;NULL&quot;)
+#  )
+
 # 3. Convert to data.table (optionally added to use if needed)
 #class(assignee_tbl)
 #setDT(assignee_tbl)
@@ -812,9 +831,10 @@ print(top_companies_tbl, n=10)</code></pre>
 ##  9 Xerox Corporation                            23173
 ## 10 Apple Inc.                                   21820
 ## # ... with 222,778 more rows</code></pre>
-<pre class="r"><code># 5. Question 2
-
-# 5.1 Merging data
+</div>
+<div id="question-2" class="section level3">
+<h3><span class="header-section-number">3.1.2</span> Question 2</h3>
+<pre class="r"><code># 5.1 Merging data
 
 #combined_data_2 &lt;- combined_data %&gt;%
 #  left_join(patent_tbl, by = c(&quot;patent_id&quot; = &quot;id&quot;))
@@ -829,6 +849,34 @@ print(top_companies_tbl, n=10)</code></pre>
 #           arrange(desc(n))
 #
 #print(top_companies_2019_tbl, n=10)</code></pre>
+</div>
+<div id="question-3" class="section level3">
+<h3><span class="header-section-number">3.1.3</span> Question 3</h3>
+<pre class="r"><code># 6.1 Merging data
+
+#combined_data_3 &lt;- combined_data %&gt;%
+#  left_join(uspc_tbl, by = c(&quot;patent_id&quot; = &quot;id&quot;))
+
+# 6.2 Wrangle data
+
+#global_companies &lt;- combined_data_3 %&gt;%
+#  filter(type == 2  | type == 3) %&gt;%
+#  unique(by=&quot;id&quot;)
+
+
+#global_top10 &lt;- global_companies %&gt;%
+#  group_by(organization) %&gt;%
+#  count(organization, sort=TRUE, name = &quot;number_patent&quot;) %&gt;%
+#  ungroup() %&gt;%
+#  arrange(desc(n))
+#  head(10)
+
+#top5_uspto &lt;- semi_join(global_companies, global_top10, by = organization) %&gt;%
+#  count(mainclass_id, sort=TRUE, name=&#39;n&#39;) %&gt;%
+#  head(5)
+  
+#top5_uspto</code></pre>
+</div>
 </div>
 </div>
 

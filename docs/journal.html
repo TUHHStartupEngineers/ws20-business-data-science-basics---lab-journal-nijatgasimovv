@@ -410,25 +410,23 @@ div.tocify {
 </div>
 
 
-<div id="intro-to-tidyverse" class="section level1">
-<h1><span class="header-section-number">1</span> Intro to tidyverse</h1>
-<div id="challenge-1" class="section level2">
-<h2><span class="header-section-number">1.1</span> Challenge 1</h2>
+<div id="challenge-1" class="section level1">
+<h1><span class="header-section-number">1</span> Challenge 1</h1>
 <p>Code for the first Challenge, sales by state are given below.</p>
 <div id="loading-libraries" class="section level3">
-<h3><span class="header-section-number">1.1.1</span> Loading libraries</h3>
+<h3><span class="header-section-number">1.0.1</span> Loading libraries</h3>
 <pre class="r"><code>library(tidyverse)
 library(readxl)
 library(lubridate)</code></pre>
 </div>
 <div id="importing-excel-data" class="section level3">
-<h3><span class="header-section-number">1.1.2</span> Importing Excel data</h3>
+<h3><span class="header-section-number">1.0.2</span> Importing Excel data</h3>
 <pre class="r"><code>bikes_c1_tbl &lt;- read_excel(path = &quot;data-science/00_data/01_bike_sales/01_raw_data/bikes.xlsx&quot;)
 orderlines_c1_tbl &lt;- read_excel(path = &quot;data-science/00_data/01_bike_sales/01_raw_data/orderlines.xlsx&quot;)
 bikeshops_c1_tbl  &lt;- read_excel(path = &quot;data-science/00_data/01_bike_sales/01_raw_data/bikeshops.xlsx&quot;)</code></pre>
 </div>
 <div id="joining-data" class="section level3">
-<h3><span class="header-section-number">1.1.3</span> Joining data</h3>
+<h3><span class="header-section-number">1.0.3</span> Joining data</h3>
 <pre class="r"><code>left_join(orderlines_c1_tbl, bikes_c1_tbl, by = c(&quot;product.id&quot; = &quot;bike.id&quot;))</code></pre>
 <pre><code>## # A tibble: 15,644 x 15
 ##    ...1  order.id order.line order.date          customer.id product.id quantity
@@ -451,7 +449,7 @@ bikeshops_c1_tbl  &lt;- read_excel(path = &quot;data-science/00_data/01_bike_sal
   left_join(bikeshops_c1_tbl, by = c(&quot;customer.id&quot; = &quot;bikeshop.id&quot;))</code></pre>
 </div>
 <div id="wrangling-data" class="section level3">
-<h3><span class="header-section-number">1.1.4</span> Wrangling data</h3>
+<h3><span class="header-section-number">1.0.4</span> Wrangling data</h3>
 <p>Create new data in which you wrangle combined data:</p>
 <pre class="r"><code>bike_orderlines_wrangled_c1_tbl &lt;- bike_orderlines_joined_c1_tbl %&gt;%
   
@@ -467,7 +465,7 @@ bikeshops_c1_tbl  &lt;- read_excel(path = &quot;data-science/00_data/01_bike_sal
   select(-...1, -gender, -url, -lat, -lng, -frame.material, -weight)</code></pre>
 </div>
 <div id="take-out-needed-data" class="section level3">
-<h3><span class="header-section-number">1.1.5</span> Take out needed data</h3>
+<h3><span class="header-section-number">1.0.5</span> Take out needed data</h3>
 <pre class="r"><code>sales_by_state_c1_tbl &lt;- bike_orderlines_wrangled_c1_tbl %&gt;%
   select(state, total.price) %&gt;% #select the columns you&#39;ll use
   group_by(state) %&gt;% #group the rows based on common states
@@ -478,7 +476,7 @@ bikeshops_c1_tbl  &lt;- read_excel(path = &quot;data-science/00_data/01_bike_sal
                                      suffix = &quot; €&quot;)) #turn the numbers to money format</code></pre>
 </div>
 <div id="plot-the-graph" class="section level3">
-<h3><span class="header-section-number">1.1.6</span> Plot the graph</h3>
+<h3><span class="header-section-number">1.0.6</span> Plot the graph</h3>
 <pre class="r"><code>sales_by_state_c1_tbl %&gt;%
   
   # Setup canvas with the columns state (x-axis) and sales (y-axis)
@@ -493,11 +491,11 @@ bikeshops_c1_tbl  &lt;- read_excel(path = &quot;data-science/00_data/01_bike_sal
 <p><img src="journal_files/figure-html/plot-1.png" width="960" /></p>
 </div>
 </div>
-<div id="challenge-2" class="section level2">
-<h2><span class="header-section-number">1.2</span> Challenge 2</h2>
+<div id="challenge-2" class="section level1">
+<h1><span class="header-section-number">2</span> Challenge 2</h1>
 <p>We will continue building on the previous code, so some steps are not needed to be repeated again.</p>
 <div id="manipulate-data-for-new-graph" class="section level3">
-<h3><span class="header-section-number">1.2.1</span> Manipulate data for new graph</h3>
+<h3><span class="header-section-number">2.0.1</span> Manipulate data for new graph</h3>
 <pre class="r"><code>sales_by_state_and_year_c1_tbl &lt;- bike_orderlines_wrangled_c1_tbl %&gt;% #create new data for visualization
   select(order.date, total.price, state) %&gt;% #take out needed column from for the new data
   mutate(year = year(order.date)) %&gt;% #add a year column using lubridate
@@ -511,7 +509,7 @@ bikeshops_c1_tbl  &lt;- read_excel(path = &quot;data-science/00_data/01_bike_sal
                                      suffix = &quot; €&quot;)) #formatting the money</code></pre>
 </div>
 <div id="visualizing-the-data" class="section level3">
-<h3><span class="header-section-number">1.2.2</span> Visualizing the data</h3>
+<h3><span class="header-section-number">2.0.2</span> Visualizing the data</h3>
 <pre class="r"><code>sales_by_state_and_year_c1_tbl %&gt;%
   ggplot(aes(x = year, y = sales, fill = state))+ #create the plot
   geom_col() +  #define plot type
@@ -524,26 +522,23 @@ bikeshops_c1_tbl  &lt;- read_excel(path = &quot;data-science/00_data/01_bike_sal
 <pre class="r"><code>  #theme(axis.text.x = element_text(angle = 70, hjust = 1)) #rotate the x-axis label</code></pre>
 </div>
 </div>
-</div>
-<div id="data-acquisition" class="section level1">
-<h1><span class="header-section-number">2</span> Data Acquisition</h1>
-<div id="challenge-3" class="section level2">
-<h2><span class="header-section-number">2.1</span> Challenge 3</h2>
+<div id="challenge-3" class="section level1">
+<h1><span class="header-section-number">3</span> Challenge 3</h1>
 <p>For this task, I will access to Deezer (music streaming platform) API and extract my Retro music playlist which I created in 2014.</p>
 <div id="load-the-libraries" class="section level3">
-<h3><span class="header-section-number">2.1.1</span> Load the libraries</h3>
+<h3><span class="header-section-number">3.0.1</span> Load the libraries</h3>
 <pre class="r"><code>library(httr)
 library(tidyverse)
 library(jsonlite)
 library(purrr)</code></pre>
 </div>
 <div id="make-request-from-api" class="section level3">
-<h3><span class="header-section-number">2.1.2</span> Make request from API</h3>
+<h3><span class="header-section-number">3.0.2</span> Make request from API</h3>
 <pre class="r"><code>resp &lt;- GET(&quot;https://api.deezer.com/playlist/1000960231&quot;)
 resp_content &lt;- content(resp, as = &quot;parsed&quot;)</code></pre>
 </div>
 <div id="wrangle-data" class="section level3">
-<h3><span class="header-section-number">2.1.3</span> Wrangle data</h3>
+<h3><span class="header-section-number">3.0.3</span> Wrangle data</h3>
 <pre class="r"><code>a &lt;- resp_content[[&quot;tracks&quot;]][[&quot;data&quot;]] #Extract the list containing song information
 
 #Extract song titles from the list
@@ -576,7 +571,7 @@ Links &lt;- a %&gt;%
 Playlist &lt;- bind_cols(&quot;Song&quot;=Titels, &quot;Album&quot;= Albums, &quot;Artist&quot;=Artists, &quot;Link&quot;=Links)</code></pre>
 </div>
 <div id="data" class="section level3">
-<h3><span class="header-section-number">2.1.4</span> Data</h3>
+<h3><span class="header-section-number">3.0.4</span> Data</h3>
 <pre class="r"><code>Playlist</code></pre>
 <pre><code>## # A tibble: 175 x 4
 ##    Song[,1]       Album[,1]                    Artist[,1]     Link[,1]          
@@ -594,8 +589,8 @@ Playlist &lt;- bind_cols(&quot;Song&quot;=Titels, &quot;Album&quot;= Albums, &qu
 ## # ... with 165 more rows</code></pre>
 </div>
 </div>
-<div id="challenge-4" class="section level2">
-<h2><span class="header-section-number">2.2</span> Challenge 4</h2>
+<div id="challenge-4" class="section level1">
+<h1><span class="header-section-number">4</span> Challenge 4</h1>
 <pre class="r"><code>#1 Loading libraries
   
 library(tidyverse) # Main Package - Loads dplyr, purrr, etc.
@@ -691,13 +686,10 @@ con</code></pre>
 <pre><code>## &lt;SQLiteConnection&gt;
 ##   DISCONNECTED</code></pre>
 </div>
-</div>
-<div id="data-wrangling" class="section level1">
-<h1><span class="header-section-number">3</span> Data Wrangling</h1>
-<div id="challenge-4-1" class="section level2">
-<h2><span class="header-section-number">3.1</span> Challenge 4</h2>
-<div id="question-1" class="section level3">
-<h3><span class="header-section-number">3.1.1</span> Question 1</h3>
+<div id="challenge-5" class="section level1">
+<h1><span class="header-section-number">5</span> Challenge 5</h1>
+<div id="question-1" class="section level2">
+<h2><span class="header-section-number">5.1</span> Question 1</h2>
 <pre class="r"><code># 1. Load libraries
 
 library(tidyverse)
@@ -832,8 +824,9 @@ print(top_companies_tbl, n=10)</code></pre>
 ## 10 Apple Inc.                                   21820
 ## # ... with 222,778 more rows</code></pre>
 </div>
-<div id="question-2" class="section level3">
-<h3><span class="header-section-number">3.1.2</span> Question 2</h3>
+<div id="question-2" class="section level2">
+<h2><span class="header-section-number">5.2</span> Question 2</h2>
+<p>For Questions 2 and 3, I will only present my code. Datasets were too large to handle for my computer, and it kept crashing no matter how many tries. I am not sure if these codes would work if run, but general idea for the solution to the problem is presented.</p>
 <pre class="r"><code># 5.1 Merging data
 
 #combined_data_2 &lt;- combined_data %&gt;%
@@ -850,8 +843,8 @@ print(top_companies_tbl, n=10)</code></pre>
 #
 #print(top_companies_2019_tbl, n=10)</code></pre>
 </div>
-<div id="question-3" class="section level3">
-<h3><span class="header-section-number">3.1.3</span> Question 3</h3>
+<div id="question-3" class="section level2">
+<h2><span class="header-section-number">5.3</span> Question 3</h2>
 <pre class="r"><code># 6.1 Merging data
 
 #combined_data_3 &lt;- combined_data %&gt;%
@@ -878,6 +871,131 @@ print(top_companies_tbl, n=10)</code></pre>
 #top5_uspto</code></pre>
 </div>
 </div>
+<div id="challenge-6" class="section level1">
+<h1><span class="header-section-number">6</span> Challenge 6</h1>
+<pre class="r"><code># 1. Load libraries and dataset
+library(tidyverse)
+library(lubridate)
+
+
+covid_data_tbl &lt;- read_csv(&quot;https://opendata.ecdc.europa.eu/covid19/casedistribution/csv&quot;)
+
+# 2. Data wrangling
+
+covid_wrangled_data_tbl &lt;- covid_data_tbl %&gt;%
+  filter(year == 2020) %&gt;% # only 2020 data will be displayed
+  select(dateRep, day, month, cases, countriesAndTerritories) %&gt;% 
+  rename (country = countriesAndTerritories) %&gt;% # for ease of coding
+  mutate(date_2 = lubridate::dmy(dateRep)) %&gt;% # create another date column in correct form as input for visualization
+  filter(country == &quot;Germany&quot;| country ==&quot;France&quot;|country == &quot;United_Kingdom&quot;|country ==&quot;United_States_of_America&quot;|country == &quot;Spain&quot;) %&gt;%
+  
+  arrange(day) %&gt;%
+  arrange(month) %&gt;% # arranging in chronological order
+
+  group_by(country) %&gt;%
+  mutate(cum_num = cumsum(cases)) %&gt;% # cumulative sum of COVID cases per country
+  ungroup() %&gt;% 
+  
+  group_by(country) %&gt;%
+  arrange(country) %&gt;% # arrange the list country-by-country
+  ungroup()
+
+# 3. Data visualization
+
+covid_wrangled_data_tbl %&gt;%
+  ggplot(aes(date_2, cum_num, color = country)) +
+  geom_line(size=0.8, aes(color = country)) +
+
+
+# 4. Formatting
+  
+  scale_x_date(date_labels = &quot;%b&quot;, date_breaks = &quot;1 month&quot;) + # each month will be displayed in graph with names
+  theme(
+    axis.text.x = element_text(
+      angle = 
+        60,
+      hjust = 1)# tilt for ease of reading
+    ) +
+  scale_colour_manual(values = c(&quot;purple&quot;, &quot;green&quot;, &quot;blue&quot;, &quot;orange&quot;, &quot;red&quot;))+ # manually select colors of lines
+  #scale_color_brewer(RColorBrewer::brewer.pal(n = 5, name = &quot;Accent&quot;)[5])+ # or alternatively select a color brewer
+  scale_y_continuous(breaks = seq(0, 15000000, by=2500000),  # display cases with 2.5 million case breaks
+                     labels = scales::dollar_format(scale = 1e-6, 
+                                                    prefix = &quot;&quot;,
+                                                    suffix = &quot; M&quot;)) +
+  labs(
+    title = &quot;Cumulative COVID-19 cases in 5 western countries&quot;,
+    subtitle = &quot; &quot;,
+    caption = &quot;As shown, the numbers in USA are growing exponentially&quot;,
+    x = &quot;Year 2020&quot;,
+    y = &quot;Cumulative Cases&quot;,
+    color = &quot;Countries:&quot; # Legend text
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = &quot;bottom&quot;,
+    plot.title = element_text(face = &quot;bold&quot;),
+    plot.caption = element_text(face = &quot;bold.italic&quot;)
+  ) </code></pre>
+<p><img src="journal_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+</div>
+<div id="challenge-7" class="section level1">
+<h1><span class="header-section-number">7</span> Challenge 7</h1>
+<pre class="r"><code># 1. Load libraries and dataset
+
+library(tidyverse)
+library(maps)
+library(scales)
+library(ggplot2)
+
+covid_data_tbl &lt;- read_csv(&quot;https://opendata.ecdc.europa.eu/covid19/casedistribution/csv&quot;)
+world &lt;- map_data(&quot;world&quot;)
+
+# 2. Wrangle data
+
+map_data_tbl &lt;- covid_data_tbl %&gt;%
+  select(deaths, countriesAndTerritories, popData2019) %&gt;%
+  group_by(countriesAndTerritories, popData2019) %&gt;%
+  summarise(total_death = sum(deaths)) %&gt;%
+  ungroup() %&gt;%
+  mutate(dead_by_pop = 100*(total_death / popData2019)) %&gt;% #percentage
+  
+  mutate(across(countriesAndTerritories, str_replace_all, &quot;_&quot;, &quot; &quot;)) %&gt;%
+  mutate(countriesAndTerritories = case_when(
+    
+    countriesAndTerritories == &quot;United Kingdom&quot; ~ &quot;UK&quot;,
+    countriesAndTerritories == &quot;United States of America&quot; ~ &quot;USA&quot;,
+    countriesAndTerritories == &quot;Czechia&quot; ~ &quot;Czech Republic&quot;,
+    TRUE ~ countriesAndTerritories
+  ))
+  
+joined_data &lt;-right_join(map_data_tbl, world, by=c(&quot;countriesAndTerritories&quot;=&quot;region&quot;))
+  
+
+# 3. Visualize data
+
+joined_data %&gt;% 
+  ggplot() +
+  geom_map(aes(map_id = countriesAndTerritories, 
+               x=long, 
+               y=lat), 
+           map = world) +
+  
+  geom_map(aes(fill = dead_by_pop, 
+               map_id = countriesAndTerritories), 
+           map = world) +
+  
+  scale_fill_gradient(low = &quot;red&quot;, 
+                      high = &quot;black&quot;,
+                      na.value = &quot;grey&quot;,
+                      name = &quot;Mortality Rate (%)&quot;)+
+  
+  labs(
+    title = &quot;Confirmed COVID-19 deaths relative to the size of the population&quot;,
+    caption = &quot;Date: 12 December 2020&quot;,
+    x = &quot;&quot;,
+    y = &quot;&quot;) +
+  theme_minimal()</code></pre>
+<p><img src="journal_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 </div>
 
 

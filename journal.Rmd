@@ -18,9 +18,8 @@ knitr::opts_chunk$set(message=FALSE,warning=FALSE, cache=TRUE)
 
 
 
-# Intro to tidyverse 
 
-## Challenge 1
+# Challenge 1
 
 Code for the first Challenge, sales by state are given below.
 
@@ -104,7 +103,7 @@ sales_by_state_c1_tbl %>%
 
 
 
-## Challenge 2
+# Challenge 2
 
 We will continue building on the previous code, so some steps are not needed to be repeated again.
 
@@ -139,9 +138,8 @@ sales_by_state_and_year_c1_tbl %>%
   #theme(axis.text.x = element_text(angle = 70, hjust = 1)) #rotate the x-axis label
 ```
 
-# Data Acquisition
 
-## Challenge 3
+# Challenge 3
 
 
 For this task, I will access to Deezer (music streaming platform) API and extract my Retro music playlist which I created in 2014.
@@ -207,7 +205,7 @@ Playlist
 
 
 
-## Challenge 4
+# Challenge 4
 
 
 ```{r}
@@ -276,10 +274,9 @@ con
 
 
 
-# Data Wrangling
 
-## Challenge 4
-### Question 1
+# Challenge 5
+## Question 1
 
 ```{r}
 # 1. Load libraries
@@ -405,7 +402,11 @@ print(top_companies_tbl, n=10)
 
 ```
 
-### Question 2
+## Question 2
+
+For Questions 2 and 3, I will only present my code. Datasets were too large to handle for my computer, and it kept crashing no matter how many tries. I am not sure if these codes would work if run, but general idea for the solution to the problem is presented. 
+
+
 ```{r}
 
 # 5.1 Merging data
@@ -426,7 +427,7 @@ print(top_companies_tbl, n=10)
 ```
 
 
-### Question 3
+## Question 3
 ```{r}
 # 6.1 Merging data
 
@@ -452,6 +453,137 @@ print(top_companies_tbl, n=10)
 #  head(5)
   
 #top5_uspto
-
+```
   
+# Challenge 6
+```{r}
+# 1. Load libraries and dataset
+library(tidyverse)
+library(lubridate)
+
+
+covid_data_tbl <- read_csv("https://opendata.ecdc.europa.eu/covid19/casedistribution/csv")
+
+# 2. Data wrangling
+
+covid_wrangled_data_tbl <- covid_data_tbl %>%
+  filter(year == 2020) %>% # only 2020 data will be displayed
+  select(dateRep, day, month, cases, countriesAndTerritories) %>% 
+  rename (country = countriesAndTerritories) %>% # for ease of coding
+  mutate(date_2 = lubridate::dmy(dateRep)) %>% # create another date column in correct form as input for visualization
+  filter(country == "Germany"| country =="France"|country == "United_Kingdom"|country =="United_States_of_America"|country == "Spain") %>%
+  
+  arrange(day) %>%
+  arrange(month) %>% # arranging in chronological order
+
+  group_by(country) %>%
+  mutate(cum_num = cumsum(cases)) %>% # cumulative sum of COVID cases per country
+  ungroup() %>% 
+  
+  group_by(country) %>%
+  arrange(country) %>% # arrange the list country-by-country
+  ungroup()
+
+# 3. Data visualization
+
+covid_wrangled_data_tbl %>%
+  ggplot(aes(date_2, cum_num, color = country)) +
+  geom_line(size=0.8, aes(color = country)) +
+
+
+# 4. Formatting
+  
+  scale_x_date(date_labels = "%b", date_breaks = "1 month") + # each month will be displayed in graph with names
+  theme(
+    axis.text.x = element_text(
+      angle = 
+        60,
+      hjust = 1)# tilt for ease of reading
+    ) +
+  scale_colour_manual(values = c("purple", "green", "blue", "orange", "red"))+ # manually select colors of lines
+  #scale_color_brewer(RColorBrewer::brewer.pal(n = 5, name = "Accent")[5])+ # or alternatively select a color brewer
+  scale_y_continuous(breaks = seq(0, 15000000, by=2500000),  # display cases with 2.5 million case breaks
+                     labels = scales::dollar_format(scale = 1e-6, 
+                                                    prefix = "",
+                                                    suffix = " M")) +
+  labs(
+    title = "Cumulative COVID-19 cases in 5 western countries",
+    subtitle = " ",
+    caption = "As shown, the numbers in USA are growing exponentially",
+    x = "Year 2020",
+    y = "Cumulative Cases",
+    color = "Countries:" # Legend text
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(face = "bold"),
+    plot.caption = element_text(face = "bold.italic")
+  ) 
+  
+```
+
+
+# Challenge 7
+
+```{r}
+# 1. Load libraries and dataset
+
+library(tidyverse)
+library(maps)
+library(scales)
+library(ggplot2)
+
+covid_data_tbl <- read_csv("https://opendata.ecdc.europa.eu/covid19/casedistribution/csv")
+world <- map_data("world")
+
+# 2. Wrangle data
+
+map_data_tbl <- covid_data_tbl %>%
+  select(deaths, countriesAndTerritories, popData2019) %>%
+  group_by(countriesAndTerritories, popData2019) %>%
+  summarise(total_death = sum(deaths)) %>%
+  ungroup() %>%
+  mutate(dead_by_pop = 100*(total_death / popData2019)) %>% #percentage
+  
+  mutate(across(countriesAndTerritories, str_replace_all, "_", " ")) %>%
+  mutate(countriesAndTerritories = case_when(
+    
+    countriesAndTerritories == "United Kingdom" ~ "UK",
+    countriesAndTerritories == "United States of America" ~ "USA",
+    countriesAndTerritories == "Czechia" ~ "Czech Republic",
+    TRUE ~ countriesAndTerritories
+  ))
+  
+joined_data <-right_join(map_data_tbl, world, by=c("countriesAndTerritories"="region"))
+  
+
+# 3. Visualize data
+
+joined_data %>% 
+  ggplot() +
+  geom_map(aes(map_id = countriesAndTerritories, 
+               x=long, 
+               y=lat), 
+           map = world) +
+  
+  geom_map(aes(fill = dead_by_pop, 
+               map_id = countriesAndTerritories), 
+           map = world) +
+  
+  scale_fill_gradient(low = "red", 
+                      high = "black",
+                      na.value = "grey",
+                      name = "Mortality Rate (%)")+
+  
+  labs(
+    title = "Confirmed COVID-19 deaths relative to the size of the population",
+    caption = "Date: 12 December 2020",
+    x = "",
+    y = "") +
+  theme_minimal()
+  
+```
+
+
 
